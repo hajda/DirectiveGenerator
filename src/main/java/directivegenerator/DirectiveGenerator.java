@@ -11,18 +11,16 @@ import java.io.UnsupportedEncodingException;
 public class DirectiveGenerator {
     public void generateDirective(final String myModule, final String pfx, final String myDirective, final boolean state) {
 
-        // TODO handle bad directive name
+        // TODO validate directive name (must start with lowerCase alphabetical character, etc)
 
         /** pfxMyDirective */
         final String[] splitDirectiveName = splitDirectiveName(myDirective);
-        capitalize(splitDirectiveName);
-        final String MyDirective = String.join("", splitDirectiveName);
+        final String[] capitalizedSplitDirectiveName = capitalize(splitDirectiveName);
+        final String MyDirective = String.join("", capitalizedSplitDirectiveName);
         final String pfxMyDirective = pfx + MyDirective; // pfxMyDirective
 
         /** pfx-my-directive */
-        final String pfx_my_directive = normalizeDirectiveName(pfxMyDirective);
-
-
+        final String pfx_my_directive = normalizeDirectiveName(pfxMyDirective); //
 
         //        final String MyDirective = myDirective.substring(0, 1).toUpperCase() + myDirective.substring(1);
         final String Pfx = pfx.substring(0, 1).toUpperCase() + pfx.substring(1);
@@ -131,19 +129,20 @@ public class DirectiveGenerator {
             splitDirectiveName(readableName);
             readableName = String.join(" ", readableName);
 
-            writer = new PrintWriter("scripts/app/" + myDirective + "/" + myDirective + ".js", "UTF-8");
+            writer = new PrintWriter("scripts/app/" + myDirective + "/" + myDirective + ".state.js", "UTF-8");
 
             writer.println("(function " + myDirective + "StateDefinition() {");
             writer.println("    'use strict';");
-            writer.println("    angular.module('" + myModule + "')");
+            writer.println("    angular");
+            writer.println("        .module('" + myModule + "')");
             writer.println("        .config(function ($stateProvider) {");
             writer.println("            $stateProvider");
-            writer.println("                .state('" + myDirective + "', {");
+            writer.println("                .state('" + pfxMyDirective + "State', {");
             writer.println("                    parent: 'site', // TODO review parent");
             writer.println("                    url: '/" + pfx_my_directive + "', // TODO review URL");
             writer.println("                    data: {");
             writer.println("                        authorities: [], // TODO set up access rights");
-            writer.println("                        pageTitle: '" + myDirective + "' // TODO review page title");
+            writer.println("                        pageTitle: '" + myDirective + "', // TODO review page title");
             writer.println("                        readableName: '" + readableName + "' // TODO review page title");
             writer.println("                },");
             writer.println("                views: {");
@@ -167,12 +166,21 @@ public class DirectiveGenerator {
 
             writer = new PrintWriter(myDirective + "-index.html", "UTF-8");
             writer.println("    <!-- " + myDirective + " directive -->");
-            writer.println("    <script src=\"scripts/app/" + myDirective + "/" + myDirective + ".js\"></script>");
+            writer.println("    <script src=\"scripts/app/" + myDirective + "/" + myDirective + ".state.js\"></script>");
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".service.js\"></script>");
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".controller.js\"></script>");
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".directive.js\"></script>");
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".filter.js\"></script>");
             writer.println("    <!-- end " + myDirective + " directive -->");
+            writer.close();
+
+            /* i18n*/
+
+            writer = new PrintWriter(myDirective + ".json", "UTF-8");
+            writer.println("{");
+            writer.println("    \"" + myDirective + "\": {");
+            writer.println("    }");
+            writer.println("}");
             writer.close();
 
         } catch (final FileNotFoundException e) {
@@ -191,26 +199,29 @@ public class DirectiveGenerator {
 
     private String normalizeDirectiveName(final String directiveName) {
         final String[] splitDirectiveName = splitDirectiveName(directiveName);
-        toLowerCase(splitDirectiveName);
-        return String.join("-", splitDirectiveName);
+        String[] decapitatedStrings = decapitate(splitDirectiveName);
+        return String.join("-", decapitatedStrings);
     }
 
     private String[] splitDirectiveName(final String directiveName) {
-        return directiveName.split("(?=\\p{Upper})");
+        String[] split = directiveName.split("(?=\\p{Upper})");
+        return split;
     }
 
-    private void toLowerCase(final String...strings) {
-        for (final String string : strings) {
-            string.toLowerCase();
+    private String[] decapitate(final String...strings) {
+        String[] decapitatedStrings = new String[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            decapitatedStrings[i] = strings[i].toLowerCase();
         }
+        return decapitatedStrings;
     }
 
-    private void capitalize(final String...strings) {
-        for (String string : strings) {
-            final char first = Character.toUpperCase(string.charAt(0));
-            string = first + string.substring(1);
-            System.out.print(string);
+    private String[] capitalize(final String...strings) {
+        String[] capitalizedStrings = new String[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            final char first = Character.toUpperCase(strings[i].charAt(0));
+            capitalizedStrings[i] = first + strings[i].substring(1);
         }
-        System.out.println();
+        return capitalizedStrings;
     }
 }
