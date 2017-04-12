@@ -27,16 +27,16 @@ public class DirectiveGenerator {
         final String MyDirectiveController = Pfx + MyDirective + "Controller";
         final String MyDirectiveFilter = Pfx + MyDirective + "Filter";
 
-        final File scriptsFolder = new File("scripts/components/" + myDirective + "/");
+        final File scriptsFolder = new File("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/");
         scriptsFolder.mkdirs();
-        final File appFolder = new File("scripts/app/" + myDirective + "/");
+        final File appFolder = new File("generated/" + myDirective + "/" + "scripts/app/" + myDirective + "/");
         appFolder.mkdirs();
 
         PrintWriter writer;
         try {
             /* directive */
 
-            writer = new PrintWriter("scripts/components/" + myDirective + "/" + myDirective + ".directive.js", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".directive.js", "UTF-8");
             writer.println("(function " + myDirective + "DirectiveDefinition() {");
             writer.println("    'use strict';");
             writer.println("    angular.module('" + myModule + "')");
@@ -49,8 +49,8 @@ public class DirectiveGenerator {
             writer.println("            restrict: 'AE',");
             writer.println("            templateUrl: 'scripts/components/" + myDirective + "/" + myDirective + ".template.html',");
             writer.println("            controller: '" + MyDirectiveController + "',");
-            writer.println("            controllerAs: 'vm',");
-            writer.println("            link: function postLink($scope, elementInstance, attributeInstances, controller) {");
+            writer.println("            controllerAs: '" + MyDirective + "Ctrl',");
+            writer.println("            link: function postLink($scope, $element, attribs, ctrl) {");
             writer.println("");
             writer.println("            }");
             writer.println("        };");
@@ -61,7 +61,7 @@ public class DirectiveGenerator {
 
             /* controller */
 
-            writer = new PrintWriter("scripts/components/" + myDirective + "/" + myDirective + ".controller.js", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".controller.js", "UTF-8");
             writer.println("(function " + myDirective + "ControllerDefinition() {");
             writer.println("    'use strict';");
             writer.println("");
@@ -71,7 +71,7 @@ public class DirectiveGenerator {
             writer.println("    " + myDirective + "Controller.$inject = [];");
             writer.println("");
             writer.println("    function " + myDirective + "Controller() {");
-            writer.println("        var vm = this;");
+            writer.println("        var " + myDirective + "Ctrl = this;");
             writer.println("    }");
             writer.println("})();");
             writer.close();
@@ -79,7 +79,7 @@ public class DirectiveGenerator {
 
             /* Service (factory method) */
 
-            writer = new PrintWriter("scripts/components/" + myDirective + "/" + myDirective + ".service.js", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".service.js", "UTF-8");
             writer.println("(function " + myDirective + "ServiceDefinition() {");
             writer.println("    'use strict';");
             writer.println("");
@@ -98,7 +98,7 @@ public class DirectiveGenerator {
 
             /* Filter */
 
-            writer = new PrintWriter("scripts/components/" + myDirective + "/" + myDirective + ".filter.js", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".filter.js", "UTF-8");
             writer.println("(function " + myDirective + "FilterDefinition() {");
             writer.println("    'use strict';");
             writer.println("");
@@ -118,18 +118,17 @@ public class DirectiveGenerator {
 
             /* template */
 
-            writer = new PrintWriter("scripts/components/" + myDirective + "/" + myDirective + ".template.html", "UTF-8");
-            writer.println("<!-- TODO generate template -->");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".template.html", "UTF-8");
+            writer.println("<!-- TODO create template -->");
             writer.close();
 
 
             /* State and state template */
 
             String readableName = MyDirective;
-            splitDirectiveName(readableName);
-            readableName = String.join(" ", readableName);
+            readableName = String.join(" ", splitDirectiveName(readableName));
 
-            writer = new PrintWriter("scripts/app/" + myDirective + "/" + myDirective + ".state.js", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/app/" + myDirective + "/" + myDirective + ".state.js", "UTF-8");
 
             writer.println("(function " + myDirective + "StateDefinition() {");
             writer.println("    'use strict';");
@@ -157,14 +156,14 @@ public class DirectiveGenerator {
 
             writer.close();
 
-            writer = new PrintWriter("scripts/app/" + myDirective + "/" + myDirective + ".html", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/app/" + myDirective + "/" + myDirective + ".html", "UTF-8");
             writer.println("<" + pfx_my_directive + "></" + pfx_my_directive + ">");
             writer.close();
 
 
             /* index references */
 
-            writer = new PrintWriter(myDirective + "-index.html", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + myDirective + "-index.html", "UTF-8");
             writer.println("    <!-- " + myDirective + " directive -->");
             writer.println("    <script src=\"scripts/app/" + myDirective + "/" + myDirective + ".state.js\"></script>");
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".service.js\"></script>");
@@ -176,7 +175,7 @@ public class DirectiveGenerator {
 
             /* i18n*/
 
-            writer = new PrintWriter(myDirective + ".json", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + myDirective + ".json", "UTF-8");
             writer.println("{");
             writer.println("    \"" + myDirective + "\": {");
             writer.println("    }");
@@ -199,17 +198,17 @@ public class DirectiveGenerator {
 
     private String normalizeDirectiveName(final String directiveName) {
         final String[] splitDirectiveName = splitDirectiveName(directiveName);
-        String[] decapitatedStrings = decapitate(splitDirectiveName);
+        final String[] decapitatedStrings = decapitate(splitDirectiveName);
         return String.join("-", decapitatedStrings);
     }
 
     private String[] splitDirectiveName(final String directiveName) {
-        String[] split = directiveName.split("(?=\\p{Upper})");
+        final String[] split = directiveName.split("(?=\\p{Upper})");
         return split;
     }
 
     private String[] decapitate(final String...strings) {
-        String[] decapitatedStrings = new String[strings.length];
+        final String[] decapitatedStrings = new String[strings.length];
         for (int i = 0; i < strings.length; i++) {
             decapitatedStrings[i] = strings[i].toLowerCase();
         }
@@ -217,7 +216,7 @@ public class DirectiveGenerator {
     }
 
     private String[] capitalize(final String...strings) {
-        String[] capitalizedStrings = new String[strings.length];
+        final String[] capitalizedStrings = new String[strings.length];
         for (int i = 0; i < strings.length; i++) {
             final char first = Character.toUpperCase(strings[i].charAt(0));
             capitalizedStrings[i] = first + strings[i].substring(1);

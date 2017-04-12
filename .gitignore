@@ -1,6 +1,11 @@
+
 bin/*
-*.html
-scripts/*
 *.class
+
+generated/
+
 .idea
 *.iml
+
+
+.settings
