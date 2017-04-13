@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(final String[] args) {
         final DirectiveGenerator directiveGenerator = new DirectiveGenerator();
-        directiveGenerator.generateDirective("myApp", "pfx", "myDirective", true);
+        directiveGenerator.generateDirective("exampleApp", "exp", "exampleComponent", null);
         System.out.println("READY.");
     }
 }
