@@ -10,7 +10,20 @@ import java.io.UnsupportedEncodingException;
  * TODO @author doc comments on top of every files
  */
 public class DirectiveGenerator {
-    public void generateDirective(final String myModule, final String pfx, final String myDirective, final boolean state) {
+    /**
+     * TODO
+     * Generate nested directives
+     * Add parameter "nested" to {@link DirectiveGenerator}.{@link generateDirective()}
+     * A string containing a relative path ending with "/" to concatenate between 'scripts/components/' + nested + 'myDirective/mydirective.component.js'
+     * {@link nested} looks something like this: 'anotherDirective/yetAnotherDirective/'
+     *
+     * @param myModule
+     * @param pfx
+     * @param myDirective
+     * @param nested TODO
+     */
+
+    public void generateDirective(final String myModule, final String pfx, final String myDirective, final String nested) {
 
         // TODO validate directive name (must start with lowerCase alphabetical character, etc)
 
@@ -61,7 +74,6 @@ public class DirectiveGenerator {
             writer.println("})();");
             writer.close();
 
-
             /* controller */
 
             writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".controller.js", "UTF-8");
@@ -71,14 +83,36 @@ public class DirectiveGenerator {
             writer.println("    angular.module('" + myModule + "')");
             writer.println("        .controller('" + MyDirectiveController + "', " + myDirective + "Controller);");
             writer.println("");
-            writer.println("    " + myDirective + "Controller.$inject = [];");
+            writer.println("    " + myDirective + "Controller.$inject = ['$scope'];");
             writer.println("");
-            writer.println("    function " + myDirective + "Controller() {");
+            writer.println("    function " + myDirective + "Controller($scope) {");
             writer.println("        var " + myDirective + "Ctrl = this;");
+            writer.println("");
+            writer.println("        /* private */");
+            writer.println("");
+            writer.println("        var myData = [];");
+            writer.println("");
+            writer.println("        /* public */");
+            writer.println("");
+            writer.println("        /*      API */");
+            writer.println("");
+            writer.println("        " + myDirective + "Ctrl.setItemName = setitemName;");
+            writer.println("");
+            writer.println("        /*      public function definitions */");
+            writer.println("");
+            writer.println("        function setItemName(itemIndex, itemName) {");
+            writer.println("            getItem(itemIndex).name = itemName;");
+            writer.println("            myData.push(itemName);");
+            writer.println("        }");
+            writer.println("");
+            writer.println("        /* implementation details */");
+            writer.println("");
+            writer.println("        function getItem(itemIndex) {");
+            writer.println("            return $scope.myModel.items[itemIndex];");
+            writer.println("        }");
             writer.println("    }");
             writer.println("})();");
             writer.close();
-
 
             /* Service (factory method) */
 
@@ -97,7 +131,6 @@ public class DirectiveGenerator {
             writer.println("    }");
             writer.println("})();");
             writer.close();
-
 
             /* Filter */
 
@@ -118,13 +151,11 @@ public class DirectiveGenerator {
             writer.println("})();");
             writer.close();
 
-
             /* template */
 
             writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".template.html", "UTF-8");
             writer.println("<!-- TODO create template -->");
             writer.close();
-
 
             /* State and state template */
 
@@ -162,7 +193,6 @@ public class DirectiveGenerator {
             writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/app/" + myDirective + "/" + myDirective + ".html", "UTF-8");
             writer.println("<" + pfx_my_directive + "></" + pfx_my_directive + ">");
             writer.close();
-
 
             /* index references */
 
@@ -203,14 +233,14 @@ public class DirectiveGenerator {
             writer = new PrintWriter("generated/" + myDirective + "/specs/" + myDirective + "/" + myDirective + ".directive.spec.js", "UTF-8");
             writer.println("(function " + pfxMyDirective + "DirectiveSpecsDefinition() {");
             writer.println("    'use strict';");
-            writer.println("    ");
+            writer.println("");
             writer.println("    describe('" + myDirective + " directive >', function " + myDirective + "DirectiveDescription() {");
-            writer.println("        ");
+            writer.println("");
             writer.println("        var directiveSnippet = '<" + pfx_my_directive + "></" + pfx_my_directive + ">', // TODO complete snippet with attributes/ template parameters / etc...");
             writer.println("            $compile, $scope,");
             writer.println("            " + MyDirective);
             writer.println("        ;");
-            writer.println("        ");
+            writer.println("");
             writer.println("        beforeEach(module('" + myModule + "'));");
             writer.println("        beforeEach(module('phoenixApp', function mockDependencies($provide) {");
             writer.println("            mockDependencies($provide);");
@@ -220,15 +250,15 @@ public class DirectiveGenerator {
             writer.println("            $scope = , $rootScope.$new();");
             writer.println("            " + MyDirective  + "= _" + MyDirective + "_;");
             writer.println("        }));");
-            writer.println("        ");
+            writer.println("");
             writer.println("        it('should render directive', function spec() {");
             writer.println("            /* compile and digest snippet */");
             writer.println("            var element = $compile(directiveSnippet)($scope);");
             writer.println("            $scope.$digest();");
-            writer.println("            ");
+            writer.println("");
             writer.println("            /* verify that the directive evaluates to the template */");
             writer.println("            expect(element.html()).toBeDefined();");
-            writer.println("            ");
+            writer.println("");
             writer.println("            /* expectations */");
             writer.println("            // e.g. expect(element.find('label')[0].innerHTML.trim()).toEqual('myDataLabel');");
             writer.println("            // e.g. expect(element.find('input')[0].getAttribute('name')).toEqual('myDataInput');");
@@ -239,7 +269,7 @@ public class DirectiveGenerator {
             writer.println("    function mockDependencies($provide) {");
             writer.println("        // e.x. mockDependentComponent($provide);");
             writer.println("    }");
-            writer.println("    ");
+            writer.println("");
             writer.println("    /** This is an example */");
             writer.println("    function mockDependentComponent($provide) {");
             writer.println("        var componentPrivateVariableMock = [];");
@@ -262,13 +292,13 @@ public class DirectiveGenerator {
             writer = new PrintWriter("generated/" + myDirective + "/specs/" + myDirective + "/" + myDirective + ".controller.spec.js", "UTF-8");
             writer.println("(function " + pfxMyDirective + "ControllerSpecsDefinition() {");
             writer.println("    'use strict';");
-            writer.println("    ");
+            writer.println("");
             writer.println("    describe('" + MyDirectiveController + " >', function " + myDirective + "ControllerDescription() {");
-            writer.println("        ");
+            writer.println("");
             writer.println("        var $scope, " + myDirective + "Ctrl,");
             writer.println("            " + MyDirective);
             writer.println("        ;");
-            writer.println("        ");
+            writer.println("");
             writer.println("        beforeEach(module('" + myModule + "'));");
             writer.println("        beforeEach(module('phoenixApp', function mockDependencies($provide) {");
             writer.println("            mockDependencies($provide);");
@@ -278,7 +308,7 @@ public class DirectiveGenerator {
             writer.println("            " + myDirective + "Ctrl = $controller('" + MyDirectiveController + "', {$rootScope: $rootScope, $scope: $scope});");
             writer.println("            " + MyDirective  + " = _" + MyDirective + "_;");
             writer.println("        }));");
-            writer.println("        ");
+            writer.println("");
             writer.println("        it('should ...', function spec() {");
             writer.println("            /* Example $scope initialiyation*/");
             writer.println("            $scope.myModel = {");
@@ -291,17 +321,17 @@ public class DirectiveGenerator {
             writer.println("                    }");
             writer.println("                ]");
             writer.println("            };");
-            writer.println("            ");
+            writer.println("");
             writer.println("            var itemName = 'Item 0';");
-            writer.println("            // e.g. " + myDirective + "Ctrl.setItemName(0, itemName);");
-            writer.println("            // e.g. expect($scope.myModel.items[0].name).toBe(itemName);");
+            writer.println("            " + myDirective + "Ctrl.setItemName(0, itemName);");
+            writer.println("            expect($scope.myModel.items[0].name).toBe(itemName);");
             writer.println("        });");
             writer.println("    });");
-            writer.println("    ");
+            writer.println("");
             writer.println("    function mockDependencies($provide) {");
             writer.println("        // e.x. mockDependentComponent($provide);");
             writer.println("    }");
-            writer.println("    ");
+            writer.println("");
             writer.println("    /** This is an example */");
             writer.println("    function mockDependentComponent($provide) {");
             writer.println("        var componentPrivateVariableMock = [];");
@@ -324,12 +354,12 @@ public class DirectiveGenerator {
             writer = new PrintWriter("generated/" + myDirective + "/specs/" + myDirective + "/" + myDirective + ".service.spec.js", "UTF-8");
             writer.println("(function " + pfxMyDirective + "ServiceSpecsDefinition() {");
             writer.println("    'use strict';");
-            writer.println("    ");
+            writer.println("");
             writer.println("    describe('" + MyDirective + " service >', function " + myDirective + "ServiceDescription() {");
-            writer.println("        ");
+            writer.println("");
             writer.println("        var " + myDirective);
             writer.println("        ;");
-            writer.println("        ");
+            writer.println("");
             writer.println("        beforeEach(module('" + myModule + "'));");
             writer.println("        beforeEach(module('phoenixApp', function mockDependencies($provide) {");
             writer.println("            mockDependencies($provide);");
@@ -337,7 +367,7 @@ public class DirectiveGenerator {
             writer.println("        beforeEach(inject(function injectDependencies(_" + MyDirective + "_) {");
             writer.println("            " + MyDirective  + " = _" + MyDirective + "_;");
             writer.println("        }));");
-            writer.println("        ");
+            writer.println("");
             writer.println("        it('should ...', function spec() {");
             writer.println("            /* Example $scope initialiyation*/");
             writer.println("            var myData = {");
@@ -350,17 +380,17 @@ public class DirectiveGenerator {
             writer.println("                    }");
             writer.println("                ]");
             writer.println("            };");
-            writer.println("            ");
+            writer.println("");
             writer.println("            var itemName = 'Item 0';");
             writer.println("            // e.g. " + myDirective + ".setItemName(myData, 0, itemName);");
             writer.println("            // e.g. expect(myData.items[0].name).toBe(itemName);");
             writer.println("        });");
             writer.println("    });");
-            writer.println("    ");
+            writer.println("");
             writer.println("    function mockDependencies($provide) {");
             writer.println("        // e.x. mockDependentComponent($provide);");
             writer.println("    }");
-            writer.println("    ");
+            writer.println("");
             writer.println("    /** This is an example */");
             writer.println("    function mockDependentComponent($provide) {");
             writer.println("        var componentPrivateVariableMock = [];");
