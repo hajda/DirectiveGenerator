@@ -72,6 +72,7 @@ public class DirectiveGenerator {
             writer.println("        };");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
             /* controller */
@@ -80,7 +81,8 @@ public class DirectiveGenerator {
             writer.println("(function " + myDirective + "ControllerDefinition() {");
             writer.println("    'use strict';");
             writer.println("");
-            writer.println("    angular.module('" + myModule + "')");
+            writer.println("    angular");
+            writer.println("    	.module('" + myModule + "')");
             writer.println("        .controller('" + MyDirectiveController + "', " + myDirective + "Controller);");
             writer.println("");
             writer.println("    " + myDirective + "Controller.$inject = ['$scope'];");
@@ -96,7 +98,7 @@ public class DirectiveGenerator {
             writer.println("");
             writer.println("        /*      API */");
             writer.println("");
-            writer.println("        " + myDirective + "Ctrl.setItemName = setitemName;");
+            writer.println("        " + myDirective + "Ctrl.setItemName = setItemName;");
             writer.println("");
             writer.println("        /*      public function definitions */");
             writer.println("");
@@ -112,6 +114,7 @@ public class DirectiveGenerator {
             writer.println("        }");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
             /* Service (factory method) */
@@ -130,6 +133,7 @@ public class DirectiveGenerator {
             writer.println("        };");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
             /* Filter */
@@ -149,12 +153,14 @@ public class DirectiveGenerator {
             writer.println("        };");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
             /* template */
 
             writer = new PrintWriter("generated/" + myDirective + "/" + "scripts/components/" + myDirective + "/" + myDirective + ".template.html", "UTF-8");
             writer.println("<!-- TODO create template -->");
+            writer.println("");
             writer.close();
 
             /* State and state template */
@@ -166,27 +172,35 @@ public class DirectiveGenerator {
 
             writer.println("(function " + myDirective + "StateDefinition() {");
             writer.println("    'use strict';");
+            writer.println("");
             writer.println("    angular");
             writer.println("        .module('" + myModule + "')");
-            writer.println("        .config(function ($stateProvider) {");
-            writer.println("            $stateProvider");
-            writer.println("                .state('" + pfxMyDirective + "State', {");
-            writer.println("                    parent: 'site', // TODO review parent");
-            writer.println("                    url: '/" + pfx_my_directive + "', // TODO review URL");
-            writer.println("                    data: {");
-            writer.println("                        authorities: [], // TODO set up access rights");
-            writer.println("                        pageTitle: '" + myDirective + "', // TODO review page title");
-            writer.println("                        readableName: '" + readableName + "' // TODO review page title");
+            writer.println("        .config(" + myDirective + "StateConfig);");
+            writer.println("");
+            writer.println("    " + myDirective + "StateConfig.$inject = ['$stateProvider'];");
+            writer.println("");
+            writer.println("    function " + myDirective + "StateConfig($stateProvider) {");
+            writer.println("        $stateProvider.state(");
+            writer.println("            '" + myDirective + "State',");
+            writer.println("            {");
+            writer.println("                parent: 'app', // TODO review parent");
+            writer.println("                url: '/" + pfx_my_directive + "', // TODO review URL");
+            writer.println("                data: {");
+            writer.println("                    authorities: [], // TODO set up access rights");
+            writer.println("                    pageTitle: '" + myDirective + "', // TODO review page title");
+            writer.println("                    readableName: '" + readableName + "' // TODO review page title");
             writer.println("                },");
             writer.println("                views: {");
-            writer.println("                    'content@': {");
-            writer.println("                        templateUrl: 'scripts/app/" + myDirective + "/" + myDirective + ".html'//,   // TODO update template url if the state is not directly under the app directory");
+            writer.println("                    'content@': { // TODO rewise the view slot to view the template in");
+            writer.println("                        templateUrl: 'app/" + myDirective + "/" + myDirective + ".html'//,   // TODO update template url if the state is not directly under the app directory");
             writer.println("                        // controller: '" + MyDirectiveController + "' // TODO review hooked controller");
             writer.println("                    }");
             writer.println("                }");
-            writer.println("            });");
-            writer.println("        });");
+            writer.println("            }");
+            writer.println("        );");
+            writer.println("    }");
             writer.println("})();");
+            writer.println("");
 
             writer.close();
 
@@ -204,15 +218,17 @@ public class DirectiveGenerator {
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".directive.js\"></script>");
             writer.println("    <script src=\"scripts/components/" + myDirective + "/" + myDirective + ".filter.js\"></script>");
             writer.println("    <!-- end " + myDirective + " directive -->");
+            writer.println("");
             writer.close();
 
             /* i18n*/
 
-            writer = new PrintWriter("generated/" + myDirective + "/" + myDirective + ".json", "UTF-8");
+            writer = new PrintWriter("generated/" + myDirective + "/" + pfxMyDirective + "State.json", "UTF-8");
             writer.println("{");
             writer.println("    \"" + myDirective + "\": {");
             writer.println("    }");
             writer.println("}");
+            writer.println("");
             writer.close();
 
             /* SPECS */
@@ -285,6 +301,7 @@ public class DirectiveGenerator {
             writer.println("        }");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
             /* controller specs */
@@ -347,6 +364,7 @@ public class DirectiveGenerator {
             writer.println("        }");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
             /* Service specs */
@@ -406,6 +424,7 @@ public class DirectiveGenerator {
             writer.println("        }");
             writer.println("    }");
             writer.println("})();");
+            writer.println("");
             writer.close();
 
         } catch (final FileNotFoundException e) {
