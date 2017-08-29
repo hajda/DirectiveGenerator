@@ -22,6 +22,30 @@
       "revId": "35dd3f779d486b5bb73e3e50f2e2a5b8382010a3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5732623_6cb166b3",
+        "filename": "src/main/java/directivegenerator/DirectiveGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1010425
+      },
+      "writtenOn": "2017-08-29T07:30:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3c159b7_b2eab089",
+      "range": {
+        "startLine": 59,
+        "startChar": 8,
+        "endLine": 59,
+        "endChar": 105
+      },
+      "revId": "35dd3f779d486b5bb73e3e50f2e2a5b8382010a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
