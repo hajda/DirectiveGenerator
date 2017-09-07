@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
  * TODO @author doc comments on top of every files
  */
 public class DirectiveGenerator {
+
     /**
      * TODO (In testing)
      * Generate nested directives
@@ -51,10 +52,10 @@ public class DirectiveGenerator {
         /** pfx-my-directive */
         final String pfx_my_directive = normalizeDirectiveName(pfxMyDirective); //
 
-        //        final String MyDirective = myDirective.substring(0, 1).toUpperCase() + myDirective.substring(1);
         final String Pfx = pfx.substring(0, 1).toUpperCase() + pfx.substring(1);
-        final String MyDirectiveController = Pfx + MyDirective + "Controller";
-        final String MyDirectiveFilter = Pfx + MyDirective + "Filter";
+        final String PfxMyDirective = Pfx + MyDirective;
+        final String MyDirectiveController = PfxMyDirective + "Controller";
+        final String PfxMyDirectiveFilter = PfxMyDirective + "Filter";
 
         /** TODO if nested, the nested folder name goes   /-- here --\ and at every other place        */
         final File scriptsFolder = new File("generated/" + componentDirectoryName + "/" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/");
@@ -74,16 +75,16 @@ public class DirectiveGenerator {
             writer.println("    angular.module('" + myModule + "')");
             writer.println("        .directive('" + pfx + MyDirective + "', " + myDirective + "Directive);");
             writer.println("");
-            writer.println("    " + myDirective + "Directive.$inject = [];");
+            writer.println("    " + myDirective + "Directive.$inject = ['" + PfxMyDirective + "'];");
             writer.println("");
-            writer.println("    function " + myDirective + "Directive() {");
+            writer.println("    function " + myDirective + "Directive(" + MyDirective + ") {");
             writer.println("        return {");
             writer.println("            restrict: 'AE',");
             writer.println("            templateUrl: '" + jsDirectoryName + "/components/" + myDirective + "/" + myDirective + ".template.html',");
             writer.println("            controller: '" + MyDirectiveController + "',");
             writer.println("            controllerAs: '" + MyDirective + "Ctrl',");
             writer.println("            link: function postLink($scope, $element, attribs, ctrl) {");
-            writer.println("");
+            writer.println("                // TODO create postLink initialization business logic"); // TODO link function or link object
             writer.println("            }");
             writer.println("        };");
             writer.println("    }");
@@ -101,30 +102,37 @@ public class DirectiveGenerator {
             writer.println("    	.module('" + myModule + "')");
             writer.println("        .controller('" + MyDirectiveController + "', " + myDirective + "Controller);");
             writer.println("");
-            writer.println("    " + myDirective + "Controller.$inject = ['$scope'];");
+            writer.println("    " + myDirective + "Controller.$inject = ['$scope', '" + PfxMyDirective + "'];");
             writer.println("");
-            writer.println("    function " + myDirective + "Controller($scope) {");
-            writer.println("        var " + myDirective + "Ctrl = this;");
+            writer.println("    function " + myDirective + "Controller($scope, " + MyDirective + ") {");
+            writer.println("        var " + myDirective + "Ctrl = this; // TODO Here is a reference to THIS controller");
             writer.println("");
-            writer.println("        /* private */");
+            writer.println("        /* \"private\" */");
             writer.println("");
-            writer.println("        var myData = [];");
+            writer.println("        // TODO declare/initialize private variables here");
+            writer.println("        var myData = []; // TODO this is a sample");
             writer.println("");
-            writer.println("        /* public */");
+            writer.println("        /* \"public\" */");
             writer.println("");
-            writer.println("        /*      API */");
+            writer.println("        /*      API */ // TODO Hook ctrl API functions on the reference to THIS controller like the example below.");
             writer.println("");
-            writer.println("        " + myDirective + "Ctrl.setItemName = setItemName;");
+            writer.println("        " + myDirective + "Ctrl.setItemName = setItemName; // TODO this is a sample");
             writer.println("");
-            writer.println("        /*      public function definitions */");
+            writer.println("        /*      API function definitions */ // TODO place ctrl API function definitions here");
             writer.println("");
+            writer.println("        /**");
+            writer.println("         * TODO this is a sample");
+            writer.println("         */");
             writer.println("        function setItemName(itemIndex, itemName) {");
             writer.println("            getItem(itemIndex).name = itemName;");
             writer.println("            myData.push(itemName);");
             writer.println("        }");
             writer.println("");
-            writer.println("        /* implementation details */");
+            writer.println("        /* implementation details */ // TODO place decomponed function definitions here");
             writer.println("");
+            writer.println("        /**");
+            writer.println("         * TODO this is a sample");
+            writer.println("         */");
             writer.println("        function getItem(itemIndex) {");
             writer.println("            return $scope.myModel.items[itemIndex];");
             writer.println("        }");
@@ -140,13 +148,18 @@ public class DirectiveGenerator {
             writer.println("    'use strict';");
             writer.println("");
             writer.println("    angular.module('" + myModule + "')");
-            writer.println("        .factory('" + Pfx + MyDirective + "', " + myDirective + "Service);");
+            writer.println("        .factory('" + PfxMyDirective + "', " + myDirective + "Service);");
             writer.println("");
             writer.println("    " + myDirective + "Service.$inject = [];");
             writer.println("");
             writer.println("    function " + myDirective + "Service() {");
-            writer.println("        return {");
+            writer.println("        var api = {");
+            writer.println("            // hook service API functions here as object properties");
             writer.println("        };");
+            writer.println("");
+            writer.println("        // TODO create service business logic");
+            writer.println("");
+            writer.println("        return api;");
             writer.println("    }");
             writer.println("})();");
             writer.println("");
@@ -159,13 +172,17 @@ public class DirectiveGenerator {
             writer.println("    'use strict';");
             writer.println("");
             writer.println("    angular.module('" + myModule + "')");
-            writer.println("        .filter('" + Pfx + MyDirective + "Filter', " + myDirective + "Filter);");
+            writer.println("        .filter('" + PfxMyDirectiveFilter + "', " + myDirective + "Filter);");
             writer.println("");
-            writer.println("    " + myDirective + "Filter.$inject = [];");
+            writer.println("    " + myDirective + "Filter.$inject = ['" + PfxMyDirective + "'];");
             writer.println("");
-            writer.println("    function " + myDirective + "Filter() {");
+            writer.println("    function " + myDirective + "Filter(" + MyDirective + ") {");
+            writer.println("        /**");
+            writer.println("         * Usage in templates: "); // TODO finalize doc comment
+            writer.println("         * Usage in JS: "); // TODO finalize doc comment
+            writer.println("         */");
             writer.println("        return function " + myDirective + "(input, arg1, arg2) {");
-            writer.println("            return input && (arg1 || arg2);");
+            writer.println("            return /* TODO create filter business logic */;");
             writer.println("        };");
             writer.println("    }");
             writer.println("})();");
