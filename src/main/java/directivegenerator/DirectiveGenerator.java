@@ -38,8 +38,8 @@ public class DirectiveGenerator {
          * base folder
          * TODO validate and fix {@link nest} (is there "/" on the end of String {@link nest})
          */
-        final String nestFolder = null == nest ? "" : nest + "/";
-        final String componentDirectoryName = null == nest ? myDirective : nest;
+        final String nestFolder = null == nest || nest.length() == 0 ? "" : nest + "/";
+        final String componentDirectoryName = myDirective;
 
         // TODO validate directive name (must start with lowerCase alphabetical character, etc)
 
@@ -80,7 +80,7 @@ public class DirectiveGenerator {
             writer.println("    function " + myDirective + "Directive(" + MyDirective + ") {");
             writer.println("        return {");
             writer.println("            restrict: 'AE',");
-            writer.println("            templateUrl: '" + jsDirectoryName + "/components/" + myDirective + "/" + myDirective + ".template.html',");
+            writer.println("            templateUrl: '" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".template.html',");
             writer.println("            controller: '" + MyDirectiveController + "',");
             writer.println("            controllerAs: '" + MyDirective + "Ctrl',");
             writer.println("            link: function postLink($scope, $element, attribs, ctrl) {");
@@ -99,7 +99,7 @@ public class DirectiveGenerator {
             writer.println("    'use strict';");
             writer.println("");
             writer.println("    angular");
-            writer.println("    	.module('" + myModule + "')");
+            writer.println("        .module('" + myModule + "')");
             writer.println("        .controller('" + MyDirectiveController + "', " + myDirective + "Controller);");
             writer.println("");
             writer.println("    " + myDirective + "Controller.$inject = ['$scope', '" + PfxMyDirective + "'];");
@@ -178,8 +178,8 @@ public class DirectiveGenerator {
             writer.println("");
             writer.println("    function " + myDirective + "Filter(" + MyDirective + ") {");
             writer.println("        /**");
-            writer.println("         * Usage in templates: "); // TODO finalize doc comment
-            writer.println("         * Usage in JS: "); // TODO finalize doc comment
+            writer.println("         * Usage in templates:"); // TODO finalize doc comment
+            writer.println("         * Usage in JS:"); // TODO finalize doc comment
             writer.println("         */");
             writer.println("        return function " + myDirective + "(input, arg1, arg2) {");
             writer.println("            return /* TODO create filter business logic */;");
@@ -193,7 +193,6 @@ public class DirectiveGenerator {
 
             writer = new PrintWriter("generated/" + componentDirectoryName + "/" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".template.html", "UTF-8");
             writer.println("<!-- TODO create template -->");
-            writer.println("");
             writer.close();
 
             /* State and state template */
@@ -225,7 +224,7 @@ public class DirectiveGenerator {
             writer.println("                },");
             writer.println("                views: {");
             writer.println("                    'content@': { // TODO rewise the view slot to view the template in");
-            writer.println("                        templateUrl: 'app/" + myDirective + "/" + myDirective + ".html'//,   // TODO update template url if the state is not directly under the app directory");
+            writer.println("                        templateUrl: 'app/" + nestFolder + "/" + myDirective + "/" + myDirective + ".html'//,   // TODO update template url if the state is not directly under the app directory");
             writer.println("                        // controller: '" + MyDirectiveController + "' // TODO review hooked controller");
             writer.println("                    }");
             writer.println("                }");
@@ -237,19 +236,26 @@ public class DirectiveGenerator {
 
             writer.close();
 
+            // state template
             writer = new PrintWriter("generated/" + componentDirectoryName + "/" + jsDirectoryName + "/app/" + nestFolder + myDirective + "/" + myDirective + ".html", "UTF-8");
             writer.println("<" + pfx_my_directive + "></" + pfx_my_directive + ">");
+            writer.close();
+
+            // complete the directive template
+            writer = new PrintWriter("generated/" + componentDirectoryName + "/" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".template.html", "UTF-8");
+            writer.println("<h3>" + readableName + "</h3>");
+            writer.println("");
             writer.close();
 
             /* index references */
 
             writer = new PrintWriter("generated/" + componentDirectoryName + "/" + myDirective + "-index.html", "UTF-8");
             writer.println("    <!-- " + myDirective + " directive -->");
-            writer.println("    <script src=\"" + jsDirectoryName + "/app/" + myDirective + "/" + myDirective + ".state.js\"></script>");
-            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + myDirective + "/" + myDirective + ".service.js\"></script>");
-            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + myDirective + "/" + myDirective + ".controller.js\"></script>");
-            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + myDirective + "/" + myDirective + ".directive.js\"></script>");
-            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + myDirective + "/" + myDirective + ".filter.js\"></script>");
+            writer.println("    <script src=\"" + jsDirectoryName + "/app/" + nestFolder+ myDirective + "/" + myDirective + ".state.js\"></script>");
+            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".service.js\"></script>");
+            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".controller.js\"></script>");
+            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".directive.js\"></script>");
+            writer.println("    <script src=\"" + jsDirectoryName + "/components/" + nestFolder + myDirective + "/" + myDirective + ".filter.js\"></script>");
             writer.println("    <!-- end " + myDirective + " directive -->");
             writer.println("");
             writer.close();
@@ -412,7 +418,7 @@ public class DirectiveGenerator {
             writer.println("        ;");
             writer.println("");
             writer.println("        beforeEach(module('" + myModule + "'));");
-            writer.println("        beforeEach(module('phoenixApp', function mockDependencies($provide) {");
+            writer.println("        beforeEach(module('" + myModule + "', function mockDependencies($provide) {");
             writer.println("            mockDependencies($provide);");
             writer.println("        }));");
             writer.println("        beforeEach(inject(function injectDependencies(_" + MyDirective + "_) {");
@@ -420,7 +426,7 @@ public class DirectiveGenerator {
             writer.println("        }));");
             writer.println("");
             writer.println("        it('should ...', function spec() {");
-            writer.println("            /* Example $scope initialiyation*/");
+            writer.println("            /* Example $scope initialization*/");
             writer.println("            var myData = {");
             writer.println("                items: [");
             writer.println("                    {");
